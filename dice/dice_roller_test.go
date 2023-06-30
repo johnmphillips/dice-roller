@@ -112,7 +112,7 @@ func Test_ErrorsWhenGivenInvalidExpression(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected an error to be thrown but it wasn't")
 	}
-	want := "john does not appear to be a valid dice rolsl expression"
+	want := "john does not appear to be a valid dice roll expression"
 	if err.Error() != want {
 		t.Errorf("Wanted error message: [%s] Got: [%s]", want, err.Error())
 	}
