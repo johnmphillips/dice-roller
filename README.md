@@ -17,6 +17,11 @@ result, _ := Roll("1d6")
 fmt.Printf("%+v\n", result)
 ```
 
+Output
+
+```go
+{result:3 rolls:[3]}
+
 Roll multiple dice
 
 ```go
