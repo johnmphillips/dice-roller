@@ -123,7 +123,7 @@ func Test_RollExplodingDice(t *testing.T) {
 		result, _ := Roll("2d4!")
 		numberOfFours := 0
 
-		fmt.Println(result)
+		fmt.Printf("%+v\n", result)
 		for _, v := range result.rolls {
 			if v == 4 {
 				numberOfFours++
