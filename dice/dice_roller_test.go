@@ -117,3 +117,23 @@ func Test_ErrorsWhenGivenInvalidExpression(t *testing.T) {
 		t.Errorf("Wanted error message: [%s] Got: [%s]", want, err.Error())
 	}
 }
+
+func Test_RollExplodingDice(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		result, _ := Roll("2d4!")
+		numberOfFours := 0
+
+		fmt.Println(result)
+		for _, v := range result.rolls {
+			if v == 4 {
+				numberOfFours++
+			}
+		}
+
+		want := numberOfFours + 2
+		if len(result.rolls) != want {
+			t.Errorf("Dice did not explode correctly: Wanted [%d total rolls] Got: [%d total rolls]", want, len(result.rolls))
+		}
+
+	}
+}

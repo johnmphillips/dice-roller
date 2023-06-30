@@ -15,7 +15,7 @@ type rollresult struct {
 
 func Roll(expression string) (*rollresult, error) {
 
-	re := regexp.MustCompile(`^([0-9]*)d([0-9]*)(kh|kl|)$`)
+	re := regexp.MustCompile(`^([0-9]*)d([0-9]*)(kh|kl|!|)$`)
 
 	if !re.MatchString(expression) {
 		return nil, fmt.Errorf("%s does not appear to be a valid dice roll expression", expression)
@@ -24,16 +24,25 @@ func Roll(expression string) (*rollresult, error) {
 	rollQuantity, _ := strconv.ParseInt(matches[1], 0, 64)
 	diceSize, _ := strconv.ParseInt(matches[2], 0, 64)
 
+	explode := matches[3] == "!"
+	advantage := matches[3] == "kh"
+	disadvantage := matches[3] == "kl"
+
 	var rolls []int
 
 	for i := 0; i < int(rollQuantity); i++ {
-		rolls = append(rolls, rand.Intn(int(diceSize))+1)
+		currentRoll := rand.Intn(int(diceSize)) + 1
+		if currentRoll == int(diceSize) && explode {
+			// if we roll max value on the dice, the dice "explodes" and we roll another
+			i--
+		}
+		rolls = append(rolls, currentRoll)
 	}
 
 	total := 0
-	if matches[3] == "kh" {
+	if advantage {
 		total = keepHighest(rolls)
-	} else if matches[3] == "kl" {
+	} else if disadvantage {
 		total = keepLowest(rolls)
 	} else {
 		total = sum(rolls)
