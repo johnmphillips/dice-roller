@@ -8,12 +8,31 @@ import (
 	"strconv"
 )
 
-type rollresult struct {
-	result int
-	rolls  []int
+// Result is the interface for the result of
+// one or more dice rolls
+type Result interface {
+	Rolls() []int
+	Total() int
 }
 
-func Roll(expression string) (*rollresult, error) {
+// result is the result of one or more dice
+// rolls
+type result struct {
+	total int
+	rolls []int
+}
+
+func (r *result) Total() int {
+	return r.total
+}
+
+// Rolls returns the individual rolls
+func (r *result) Rolls() []int {
+	return r.rolls
+}
+
+// Roll rolls the dice and returns the result if successful
+func Roll(expression string) (Result, error) {
 
 	re := regexp.MustCompile(`^([0-9]*)d([0-9]*)(kh|kl|!|)$`)
 
@@ -39,17 +58,15 @@ func Roll(expression string) (*rollresult, error) {
 		rolls = append(rolls, currentRoll)
 	}
 
-	total := 0
 	if advantage {
-		total = keepHighest(rolls)
-	} else if disadvantage {
-		total = keepLowest(rolls)
-	} else {
-		total = sum(rolls)
+		return &result{total: keepHighest(rolls), rolls: rolls}, nil
 	}
 
-	result := rollresult{rolls: rolls, result: total}
-	return &result, nil
+	if disadvantage {
+		return &result{total: keepLowest(rolls), rolls: rolls}, nil
+	}
+
+	return &result{rolls: rolls, total: sum(rolls)}, nil
 }
 
 func sum(rolls []int) int {
