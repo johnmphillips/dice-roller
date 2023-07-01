@@ -16,8 +16,8 @@ func Test_RollsCorrectNumberOfDice(t *testing.T) {
 		expression := fmt.Sprintf("%dd%d", numberOfDice, diceSize)
 		result, _ := Roll(expression)
 
-		if len(result.rolls) != numberOfDice {
-			t.Errorf("%s: Expected %d dice to be rolled but got %d", expression, numberOfDice, len(result.rolls))
+		if len(result.Rolls()) != numberOfDice {
+			t.Errorf("%s: Expected %d dice to be rolled but got %d", expression, numberOfDice, len(result.Rolls()))
 		}
 	}
 
@@ -32,9 +32,9 @@ func Test_RollsCorrectSizeOfDice(t *testing.T) {
 		expression := fmt.Sprintf("%dd%d", numberOfDice, diceSize)
 		result, _ := Roll(expression)
 
-		for _, v := range result.rolls {
+		for _, v := range result.Rolls() {
 			if v > diceSize || v < 1 {
-				t.Errorf("%s: Dice values should be between 1 and %d. Got %v", expression, diceSize, result.rolls)
+				t.Errorf("%s: Dice values should be between 1 and %d. Got %v", expression, diceSize, result.Rolls())
 			}
 		}
 	}
@@ -51,12 +51,12 @@ func Test_RollSum(t *testing.T) {
 
 		sumOfRolls := 0
 
-		for _, v := range result.rolls {
+		for _, v := range result.Rolls() {
 			sumOfRolls += v
 		}
 
-		if result.result != sumOfRolls {
-			t.Errorf("%s: Result should equal the sum of the rolls. Got %v", expression, result.rolls)
+		if result.Total() != sumOfRolls {
+			t.Errorf("%s: Result should equal the sum of the rolls. Got %v", expression, result.Rolls())
 		}
 
 	}
@@ -73,14 +73,14 @@ func Test_RollKeepLowest(t *testing.T) {
 
 		lowestRoll := math.MaxInt
 
-		for _, v := range result.rolls {
+		for _, v := range result.Rolls() {
 			if v < lowestRoll {
 				lowestRoll = v
 			}
 		}
 
-		if result.result != lowestRoll {
-			t.Errorf("%s: Result should equal the lowest roll. Got %v", expression, result.rolls)
+		if result.Total() != lowestRoll {
+			t.Errorf("%s: Result should equal the lowest roll. Got %v", expression, result.Rolls())
 		}
 	}
 }
@@ -95,14 +95,14 @@ func Test_RollKeepHighest(t *testing.T) {
 
 		highestRoll := 0
 
-		for _, v := range result.rolls {
+		for _, v := range result.Rolls() {
 			if v > highestRoll {
 				highestRoll = v
 			}
 		}
 
-		if result.result != highestRoll {
-			t.Errorf("%s: Result should equal the highestRoll roll. Got %v", expression, result.rolls)
+		if result.Total() != highestRoll {
+			t.Errorf("%s: Result should equal the highestRoll roll. Got %v", expression, result.Rolls())
 		}
 	}
 }
@@ -123,16 +123,15 @@ func Test_RollExplodingDice(t *testing.T) {
 		result, _ := Roll("2d4!")
 		numberOfFours := 0
 
-		fmt.Printf("%+v\n", result)
-		for _, v := range result.rolls {
+		for _, v := range result.Rolls() {
 			if v == 4 {
 				numberOfFours++
 			}
 		}
 
 		want := numberOfFours + 2
-		if len(result.rolls) != want {
-			t.Errorf("Dice did not explode correctly: Wanted [%d total rolls] Got: [%d total rolls]", want, len(result.rolls))
+		if len(result.Rolls()) != want {
+			t.Errorf("Dice did not explode correctly: Wanted [%d total rolls] Got: [%d total rolls]", want, len(result.Rolls()))
 		}
 
 	}
